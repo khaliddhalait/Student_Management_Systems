@@ -1,0 +1,59 @@
+package com.admin;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.conn.DBConnect;
+import com.dao.TeacherDAO;
+
+/**
+ * Servlet implementation class AddTeacherServlet
+ */
+public class AddTeacherServlet extends HttpServlet {
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		try {
+			String n = req.getParameter("name");
+			String g = req.getParameter("gender");
+			String d = req.getParameter("dob");
+			String q = req.getParameter("qua");
+			String e = req.getParameter("email");
+			String p = req.getParameter("password");
+			Encoder encoder = Base64.getEncoder();
+			p = encoder.encodeToString(p.getBytes());
+
+			Connection conn = DBConnect.getConn();
+			TeacherDAO tdao = new TeacherDAO(conn);
+			if (tdao.validateEmail(e)) {
+				res.sendRedirect("admin/add_info.jsp?fmsg=Teacher with email id added already");
+			} else {
+				PreparedStatement ps = conn.prepareStatement(
+						"insert into teacher(name,gender,dob,qualification,email,password) values(?,?,?,?,?,?)");
+				ps.setString(1, n);
+				ps.setString(2, g);
+				ps.setString(3, d);
+				ps.setString(4, q);
+				ps.setString(5, e);
+				ps.setString(6, p);
+
+				int i = ps.executeUpdate();
+				if (i == 1) {
+					res.sendRedirect("admin/add_info.jsp?smsg=Teacher added succesfully");
+				} else {
+					res.sendRedirect("admin/add_info.jsp?fmsg=Teacher not updated");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.sendRedirect("admin/add_info.jsp?fmsg=Something went wrong, please try later");
+		}
+	}
+}
