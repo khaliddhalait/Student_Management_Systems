@@ -1,2 +1,2 @@
-Login id = laksyasms@gmail.com
+Login id = admin@gmail.com
 password = admin123
