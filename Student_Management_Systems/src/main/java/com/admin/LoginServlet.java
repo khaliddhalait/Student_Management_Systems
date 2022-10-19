@@ -22,7 +22,7 @@ public class LoginServlet extends HttpServlet {
 		Encoder encoder = Base64.getEncoder();
 		password = encoder.encodeToString(password.getBytes());
 
-		if (email.equals("laksyasms@gmail.com") && password.equals("YWRtaW4xMjM=")) {
+		if (email.equals("admin@gmail.com") && password.equals("YWRtaW4xMjM=")) {
 			HttpSession hs = req.getSession();
 			hs.setAttribute("email", email);
 			hs.setAttribute("adname", "admin");
